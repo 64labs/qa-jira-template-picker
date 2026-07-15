@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jira Template Picker</title>
+<script>try{var t=localStorage.getItem('qa-jira-template-picker:theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
   :root {
@@ -18,9 +19,32 @@
     --shadow: 0 2px 16px rgba(0,0,0,0.08);
     --ph: #b45309;
     --link: #1558BC;
+    --th-bg: #f5f5f5;
+    --sh-purple-bg: #F3F0FF; --sh-purple-fg: #403294;
+    --sh-red-bg:    #FFECEB; --sh-red-fg:    #AE2E24;
+    --sh-green-bg:  #DCFFF1; --sh-green-fg:  #216E4E;
+    --sh-blue-bg:   #E9F2FE; --sh-blue-fg:   #1558BC;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1b1b19;
+    --surface: #262624;
+    --border: #3a3a37;
+    --border-strong: #4c4c48;
+    --text: #ececea;
+    --text-secondary: #b4b2a9;
+    --text-muted: #7c7b75;
+    --hover: #2e2e2b;
+    --shadow: 0 2px 16px rgba(0,0,0,0.4);
+    --ph: #f0b563;
+    --link: #85b7eb;
+    --th-bg: #2e2e2b;
+    --sh-purple-bg: #2d2650; --sh-purple-fg: #c9bef7;
+    --sh-red-bg:    #4a201d; --sh-red-fg:    #f0a49e;
+    --sh-green-bg:  #0e3b2b; --sh-green-fg:  #7ee2b8;
+    --sh-blue-bg:   #12305c; --sh-blue-fg:   #9cc3f5;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --bg: #1b1b19;
       --surface: #262624;
       --border: #3a3a37;
@@ -32,14 +56,12 @@
       --shadow: 0 2px 16px rgba(0,0,0,0.4);
       --ph: #f0b563;
       --link: #85b7eb;
+      --th-bg: #2e2e2b;
+      --sh-purple-bg: #2d2650; --sh-purple-fg: #c9bef7;
+      --sh-red-bg:    #4a201d; --sh-red-fg:    #f0a49e;
+      --sh-green-bg:  #0e3b2b; --sh-green-fg:  #7ee2b8;
+      --sh-blue-bg:   #12305c; --sh-blue-fg:   #9cc3f5;
     }
-    .sh-purple { background: #2d2650; color: #c9bef7; }
-    .sh-red    { background: #4a201d; color: #f0a49e; }
-    .sh-green  { background: #0e3b2b; color: #7ee2b8; }
-    .sh-blue   { background: #12305c; color: #9cc3f5; }
-    .tpl-table th { background: #2e2e2b; }
-    .passed-cell   { background: #0e3b2b; color: #7ee2b8; }
-    .reopened-cell { background: #4a201d; color: #f0a49e; }
   }
   *, *::before, *::after { box-sizing: border-box; }
   body {
@@ -60,7 +82,7 @@
   }
   .header-row {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     margin: 0 0 1.5rem;
   }
@@ -70,8 +92,18 @@
     margin: 0;
     color: var(--text);
   }
+  .header-actions { display: flex; align-items: center; gap: 14px; }
   .repo-link { font-size: 12px; color: var(--text-muted); text-decoration: none; }
   .repo-link:hover { color: var(--link); }
+  .theme-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    border-radius: 8px; border: 0.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text-secondary);
+    font-size: 12px; cursor: pointer; transition: all .15s;
+    font-family: inherit;
+  }
+  .theme-btn:hover { background: var(--hover); color: var(--text); }
 
   /* ── Session controls ── */
   .controls {
@@ -164,7 +196,7 @@
     font-size: 12px; cursor: pointer; transition: all .15s;
     font-family: inherit;
   }
-  .clear-btn:hover { background: var(--hover); color: #AE2E24; border-color: #AE2E24; }
+  .clear-btn:hover { background: var(--hover); color: var(--sh-red-fg); border-color: var(--sh-red-fg); }
 
   .tab-group-label {
     font-size: 11px;
@@ -213,10 +245,10 @@
     font-weight: 500;
     font-size: 13px;
   }
-  .sh-purple { background: #F3F0FF; color: #403294; }
-  .sh-red    { background: #FFECEB; color: #AE2E24; }
-  .sh-green  { background: #DCFFF1; color: #216E4E; }
-  .sh-blue   { background: #E9F2FE; color: #1558BC; }
+  .sh-purple { background: var(--sh-purple-bg); color: var(--sh-purple-fg); }
+  .sh-red    { background: var(--sh-red-bg);    color: var(--sh-red-fg); }
+  .sh-green  { background: var(--sh-green-bg);  color: var(--sh-green-fg); }
+  .sh-blue   { background: var(--sh-blue-bg);   color: var(--sh-blue-fg); }
   .tpl-body {
     padding: 10px 14px;
     font-size: 13px;
@@ -228,7 +260,7 @@
   .tpl-section { padding: 10px 14px; border-bottom: 0.5px solid var(--border); }
   .tpl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .tpl-table th {
-    background: var(--bg);
+    background: var(--th-bg);
     padding: 8px 12px;
     text-align: left;
     font-weight: 600;
@@ -243,12 +275,12 @@
   .tpl-table a { color: var(--link); }
   .passed-cell {
     display: inline-flex; align-items: center; gap: 6px;
-    background: #DCFFF1; color: #216E4E;
+    background: var(--sh-green-bg); color: var(--sh-green-fg);
     padding: 6px 12px; border-radius: 8px; font-weight: 500; font-size: 13px;
   }
   .reopened-cell {
     display: inline-flex; align-items: center; gap: 6px;
-    background: #FFECEB; color: #AE2E24;
+    background: var(--sh-red-bg); color: var(--sh-red-fg);
     padding: 6px 12px; border-radius: 8px; font-weight: 500; font-size: 13px;
   }
   .ph { color: var(--ph); font-weight: 600; }
@@ -274,7 +306,10 @@
 <div class="container">
   <div class="header-row">
     <h1>Jira Template Picker</h1>
-    <a class="repo-link" href="https://github.com/64labs/qa-jira-template-picker" target="_blank" rel="noopener">64labs/qa-jira-template-picker</a>
+    <div class="header-actions">
+      <a class="repo-link" href="https://github.com/64labs/qa-jira-template-picker" target="_blank" rel="noopener">64labs/qa-jira-template-picker</a>
+      <button class="theme-btn" id="theme-btn" type="button" title="Switch theme"></button>
+    </div>
   </div>
 
   <!-- ── Session controls ── -->
@@ -428,6 +463,33 @@
 
 <script>
 const STORAGE_KEY = 'qa-jira-template-picker';
+const THEME_KEY = 'qa-jira-template-picker:theme';
+
+/* ── Theme (auto → light → dark), kept separate from session state ── */
+const THEME_ORDER = ['auto', 'light', 'dark'];
+const THEME_META = {
+  auto:  { icon: 'ti-device-laptop', label: 'Auto' },
+  light: { icon: 'ti-sun',           label: 'Light' },
+  dark:  { icon: 'ti-moon',          label: 'Dark' }
+};
+let theme = 'auto';
+try {
+  const t = localStorage.getItem(THEME_KEY);
+  if (THEME_ORDER.includes(t)) theme = t;
+} catch (e) {}
+
+function applyTheme() {
+  if (theme === 'auto') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', theme);
+  const m = THEME_META[theme];
+  document.getElementById('theme-btn').innerHTML = `<i class="ti ${m.icon}"></i> ${m.label}`;
+}
+document.getElementById('theme-btn').addEventListener('click', () => {
+  theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % THEME_ORDER.length];
+  try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+  applyTheme();
+});
+applyTheme();
 const DEFAULT_BROWSERS = ['Chrome', 'Firefox', 'Safari', 'iOS Safari', 'Android'];
 
 let browsersList = DEFAULT_BROWSERS;
