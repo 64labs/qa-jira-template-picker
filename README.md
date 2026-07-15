@@ -2,45 +2,30 @@
 
 One page app to copy Jira templates for QA work.
 
-Fill in your session context once (environment, browsers, initial steps) — it spreads across all templates instantly. Copy, paste into Jira, done.
-
-## Features
-
-- **Environment name + URL** → rendered as clickable Jira link markup `[staging|https://staging.site.com]`
-- **Browser multi-select** — selected browsers listed in every template
-- **Initial steps** — reusable steps prefix for bug/regression descriptions (e.g. common checkout flow steps)
-- **Auto-save** — session state persists in localStorage, survives page reloads
-- **Clear session** — one click to reset everything
-- **Unfilled placeholders highlighted** — `{{env}}`, `{{browsers}}` stay visible so you never paste a half-empty template
-
-## Usage
-
-Open the page, fill the sidebar, hit Copy on any template.
+Templates are copied as **rich HTML with Atlassian editor panels** — paste into a Jira description or comment and the colored panels, tables and lists appear natively. Fill in your session context once (environment, browsers, initial steps) and it spreads across the relevant templates.
 
 Hosted version: `https://64labs.github.io/qa-jira-template-picker/`
 
-## Editing templates
+## Templates
 
-All templates and the browser list live in [`config.json`](./config.json) — edit it right on GitHub, no build step, no deploy. Changes go live on next page load.
+- **Bug**: Bug report, Multi bug, Bug acceptance, Bug reopen
+- **Story**: Story acceptance
+- **QA review**: No questions, Tests linked, Tests linked (Asics ZA), QA notes, Questions raised
 
-Template format:
+## Session context
 
-```json
-{
-  "id": "unique-id",
-  "title": "Card title",
-  "tag": "description | comment",
-  "body": "Template text with {{env}}, {{browsers}}, {{steps}} placeholders"
-}
-```
+- **Environment name + URL** → inserted into the Environment column of acceptance/reopen tables as a clickable link (plain text if only one field is filled)
+- **Browsers multi-select** → comma-separated list in the Browsers column
+- **Initial steps** (optional) → prepended to *Steps to reproduce* in Bug report / Multi bug (e.g. a common checkout flow)
+- **Auto-save** — session state persists in localStorage, survives page reloads
+- **Clear session** — one click to reset everything
+- **Unfilled placeholders highlighted** — `{{env}}` / `{{browsers}}` stay visible in the preview so you never paste a half-empty template
 
-Available placeholders:
+## Editing the browser list
 
-| Placeholder | Replaced with |
-|---|---|
-| `{{env}}` | `[name\|url]` Jira link (or plain name/URL if only one is filled) |
-| `{{browsers}}` | Comma-separated selected browsers |
-| `{{steps}}` | Initial steps textarea content + newline (empty if not filled) |
+The browser list lives in [`config.json`](./config.json) — edit it right on GitHub, no build step, no deploy. Changes go live on next page load.
+
+Templates themselves are rich Atlassian HTML and live in `index.html` (`templates` object in the script).
 
 ## GitHub Pages setup
 
@@ -51,4 +36,4 @@ Available placeholders:
 
 ## Local use
 
-`index.html` also works opened directly as a file — it falls back to built-in default templates when `config.json` can't be fetched (browsers block `fetch` on `file://`). For the config to load locally, serve the folder: `npx serve` or `python3 -m http.server`.
+`index.html` also works opened directly as a file — it falls back to the built-in browser list when `config.json` can't be fetched (browsers block `fetch` on `file://`). For the config to load locally, serve the folder: `npx serve` or `python3 -m http.server`.

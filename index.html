@@ -1,243 +1,441 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>QA Jira Template Picker</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jira Template Picker</title>
+<link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
-:root {
-  --bg: #f7f7f5;
-  --surface: #ffffff;
-  --surface-alt: #f1f1ee;
-  --border: #dddbd4;
-  --border-strong: #c5c3bb;
-  --text: #1f1f1d;
-  --text-secondary: #5f5e5a;
-  --text-muted: #979690;
-  --accent: #185fa5;
-  --accent-bg: #e6f1fb;
-  --accent-border: #85b7eb;
-  --success: #0f6e56;
-  --success-bg: #e1f5ee;
-  --success-border: #5dcaa5;
-  --danger: #a32d2d;
-  --danger-border: #f09595;
-  --radius: 8px;
-}
-@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #1b1b19;
-    --surface: #262624;
-    --surface-alt: #2e2e2b;
-    --border: #3a3a37;
-    --border-strong: #4c4c48;
-    --text: #ececea;
-    --text-secondary: #b4b2a9;
-    --text-muted: #7c7b75;
-    --accent: #85b7eb;
-    --accent-bg: #0c2c4c;
-    --accent-border: #378add;
-    --success: #5dcaa5;
-    --success-bg: #08322a;
-    --success-border: #1d9e75;
-    --danger: #f09595;
-    --danger-border: #a32d2d;
+    --bg: #f5f5f5;
+    --surface: #fff;
+    --border: #e0e0e0;
+    --border-strong: #ccc;
+    --text: #1a1a1a;
+    --text-secondary: #666;
+    --text-muted: #888;
+    --hover: #f0f0f0;
+    --shadow: 0 2px 16px rgba(0,0,0,0.08);
+    --ph: #b45309;
+    --link: #1558BC;
   }
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
-.topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 24px; border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-.topbar h1 { font-size: 16px; font-weight: 600; }
-.topbar .repo-link { font-size: 12px; color: var(--text-muted); text-decoration: none; }
-.topbar .repo-link:hover { color: var(--accent); }
-.layout { display: flex; min-height: calc(100vh - 49px); }
-.sidebar {
-  width: 260px; flex-shrink: 0;
-  border-right: 1px solid var(--border);
-  padding: 20px 16px;
-  display: flex; flex-direction: column; gap: 20px;
-  background: var(--surface);
-}
-.main {
-  flex: 1; padding: 20px 24px;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-  gap: 16px; align-content: start;
-}
-.field-label {
-  font-size: 11px; font-weight: 600; color: var(--text-secondary);
-  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
-}
-.field-label-hint { font-size: 10px; font-weight: 400; color: var(--text-muted); text-transform: none; letter-spacing: 0; margin-left: 4px; }
-.field-group { display: flex; flex-direction: column; gap: 4px; }
-input[type="text"] {
-  width: 100%; font-size: 13px; padding: 8px 10px;
-  border: 1px solid var(--border-strong); border-radius: var(--radius);
-  background: var(--surface); color: var(--text); outline: none;
-}
-input[type="text"]:focus { border-color: var(--accent-border); }
-input::placeholder, textarea::placeholder { color: var(--text-muted); }
-textarea {
-  width: 100%; font-size: 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  resize: vertical; min-height: 90px; line-height: 1.5;
-  padding: 8px 10px; border: 1px solid var(--border-strong);
-  border-radius: var(--radius); background: var(--surface);
-  color: var(--text); outline: none;
-}
-textarea:focus { border-color: var(--accent-border); }
-.env-preview {
-  font-size: 11px; color: var(--text-muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.env-preview.ready { color: var(--accent); }
-.chip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-.chip {
-  border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 6px 8px; font-size: 12px;
-  background: var(--surface); color: var(--text-secondary);
-  cursor: pointer; text-align: center; user-select: none;
-  transition: all 0.1s;
-}
-.chip:hover { border-color: var(--border-strong); }
-.chip.active { border-color: var(--accent-border); background: var(--accent-bg); color: var(--accent); }
-.divider { height: 1px; background: var(--border); }
-.clear-btn {
-  width: 100%; font-size: 12px; padding: 7px 10px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  border: 1px solid var(--border-strong); border-radius: var(--radius);
-  background: var(--surface); color: var(--text-secondary);
-  transition: all 0.1s;
-}
-.clear-btn:hover { color: var(--danger); border-color: var(--danger-border); }
-.saved-note { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 6px; }
-.card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 16px 18px;
-  display: flex; flex-direction: column; gap: 10px;
-  height: fit-content;
-}
-.card-header { display: flex; align-items: center; justify-content: space-between; }
-.card-title { font-size: 13px; font-weight: 600; }
-.tag { font-size: 11px; padding: 2px 10px; border-radius: 99px; }
-.tag-description { background: var(--accent-bg); color: var(--accent); }
-.tag-comment { background: var(--success-bg); color: var(--success); }
-.card-body {
-  font-size: 12px; color: var(--text-secondary);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  white-space: pre-wrap; line-height: 1.6;
-  background: var(--surface-alt); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 10px 12px;
-  max-height: 260px; overflow-y: auto;
-}
-.copy-btn {
-  align-self: flex-end; font-size: 12px; padding: 6px 14px; cursor: pointer;
-  border: 1px solid var(--border-strong); border-radius: var(--radius);
-  background: var(--surface); color: var(--text);
-  display: flex; align-items: center; gap: 6px; transition: all 0.1s;
-}
-.copy-btn:hover { background: var(--surface-alt); }
-.copy-btn.copied { border-color: var(--success-border); color: var(--success); }
-.placeholder { color: var(--accent); font-weight: 600; }
-.jira-link { color: var(--success); }
-.load-error {
-  grid-column: 1 / -1; font-size: 13px; color: var(--text-muted);
-  padding: 12px; border: 1px dashed var(--border-strong); border-radius: var(--radius);
-}
-@media (max-width: 760px) {
-  .layout { flex-direction: column; }
-  .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
-  .main { grid-template-columns: 1fr; }
-}
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1b1b19;
+      --surface: #262624;
+      --border: #3a3a37;
+      --border-strong: #4c4c48;
+      --text: #ececea;
+      --text-secondary: #b4b2a9;
+      --text-muted: #7c7b75;
+      --hover: #2e2e2b;
+      --shadow: 0 2px 16px rgba(0,0,0,0.4);
+      --ph: #f0b563;
+      --link: #85b7eb;
+    }
+    .sh-purple { background: #2d2650; color: #c9bef7; }
+    .sh-red    { background: #4a201d; color: #f0a49e; }
+    .sh-green  { background: #0e3b2b; color: #7ee2b8; }
+    .sh-blue   { background: #12305c; color: #9cc3f5; }
+    .tpl-table th { background: #2e2e2b; }
+    .passed-cell   { background: #0e3b2b; color: #7ee2b8; }
+    .reopened-cell { background: #4a201d; color: #f0a49e; }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 2rem;
+    min-height: 100vh;
+    color: var(--text);
+  }
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+  }
+  .header-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 0 0 1.5rem;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text);
+  }
+  .repo-link { font-size: 12px; color: var(--text-muted); text-decoration: none; }
+  .repo-link:hover { color: var(--link); }
+
+  /* ── Session controls ── */
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 20px;
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px 12px;
+    margin-bottom: 1.5rem;
+  }
+  .control-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin: 0 0 6px;
+  }
+  .control-label .hint { text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .controls input[type="text"] {
+    width: 100%;
+    font-size: 13px;
+    padding: 7px 10px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+  }
+  .controls input[type="text"] + input[type="text"] { margin-top: 6px; }
+  .controls input:focus, .controls textarea:focus { border-color: var(--text-muted); }
+  .controls input::placeholder, .controls textarea::placeholder { color: var(--text-muted); }
+  .env-preview {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .env-preview a { color: var(--link); }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 400;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .chip:hover { background: var(--hover); }
+  .chip.active {
+    background: var(--hover);
+    color: var(--text);
+    border-color: var(--text-muted);
+    font-weight: 500;
+  }
+  .controls textarea {
+    width: 100%;
+    font-size: 13px;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 58px;
+    padding: 7px 10px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+  }
+  .steps-cell { grid-column: 1 / -1; }
+  .controls-footer {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .autosave-note { font-size: 11px; color: var(--text-muted); }
+  .clear-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px; border: 0.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text-secondary);
+    font-size: 12px; cursor: pointer; transition: all .15s;
+    font-family: inherit;
+  }
+  .clear-btn:hover { background: var(--hover); color: #AE2E24; border-color: #AE2E24; }
+
+  .tab-group-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin: 0.75rem 0 4px;
+    width: 100%;
+  }
+  .tab-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 6px 16px;
+    border-radius: 8px;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 400;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .tab:hover { background: var(--hover); }
+  .tab.active {
+    background: var(--hover);
+    color: var(--text);
+    border-color: var(--text-muted);
+    font-weight: 500;
+  }
+  .template-box {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    font-weight: 500;
+    font-size: 13px;
+  }
+  .sh-purple { background: #F3F0FF; color: #403294; }
+  .sh-red    { background: #FFECEB; color: #AE2E24; }
+  .sh-green  { background: #DCFFF1; color: #216E4E; }
+  .sh-blue   { background: #E9F2FE; color: #1558BC; }
+  .tpl-body {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    min-height: 28px;
+  }
+  .numbered { padding: 6px 14px 10px; font-size: 13px; color: var(--text-secondary); }
+  .numbered p { margin: 3px 0; }
+  .tpl-section { padding: 10px 14px; border-bottom: 0.5px solid var(--border); }
+  .tpl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tpl-table th {
+    background: var(--bg);
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    border: 0.5px solid var(--border);
+  }
+  .tpl-table td {
+    padding: 8px 12px;
+    border: 0.5px solid var(--border);
+    vertical-align: middle;
+  }
+  .tpl-table td.empty { height: 32px; }
+  .tpl-table a { color: var(--link); }
+  .passed-cell {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #DCFFF1; color: #216E4E;
+    padding: 6px 12px; border-radius: 8px; font-weight: 500; font-size: 13px;
+  }
+  .reopened-cell {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #FFECEB; color: #AE2E24;
+    padding: 6px 12px; border-radius: 8px; font-weight: 500; font-size: 13px;
+  }
+  .ph { color: var(--ph); font-weight: 600; }
+  .copy-btn {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 1rem; padding: 8px 18px;
+    border-radius: 8px; border: 0.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text);
+    font-size: 13px; cursor: pointer; transition: all .15s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { background: var(--hover); }
+  .copy-btn.copied { color: #216E4E; border-color: #216E4E; }
+  .note-text { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+  @media (max-width: 600px) {
+    body { padding: 0.75rem; }
+    .container { padding: 1.25rem; }
+    .controls { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
+<div class="container">
+  <div class="header-row">
+    <h1>Jira Template Picker</h1>
+    <a class="repo-link" href="https://github.com/64labs/qa-jira-template-picker" target="_blank" rel="noopener">64labs/qa-jira-template-picker</a>
+  </div>
 
-<div class="topbar">
-  <h1>QA Jira Template Picker</h1>
-  <a class="repo-link" href="https://github.com/64labs/qa-jira-template-picker" target="_blank" rel="noopener">64labs/qa-jira-template-picker</a>
-</div>
-
-<div class="layout">
-  <aside class="sidebar">
-    <div class="field-group">
-      <div class="field-label">Environment</div>
-      <input type="text" id="env-name" placeholder="staging" autocomplete="off" />
-      <input type="text" id="env-url" placeholder="https://staging.site.com" autocomplete="off" style="margin-top:4px" />
-      <div class="env-preview" id="env-preview">Jira: [name|url]</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="field-group">
-      <div class="field-label">Browsers</div>
-      <div class="chip-grid" id="browsers"></div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="field-group">
-      <div class="field-label">Initial steps <span class="field-label-hint">optional</span></div>
-      <textarea id="initial-steps" placeholder="1. Open PDP&#10;2. Add to cart&#10;3. Go to checkout"></textarea>
-    </div>
-
-    <div class="divider"></div>
-
+  <!-- ── Session controls ── -->
+  <div class="controls">
     <div>
-      <button class="clear-btn" id="clear-btn">🗑 Clear session</button>
-      <div class="saved-note">Auto-saved in this browser</div>
+      <p class="control-label">Environment</p>
+      <input type="text" id="env-name" placeholder="Name — e.g. DEV, staging" autocomplete="off">
+      <input type="text" id="env-url" placeholder="URL — https://staging.site.com" autocomplete="off">
+      <div class="env-preview" id="env-preview">Name + URL &rarr; clickable link in Jira</div>
     </div>
-  </aside>
+    <div>
+      <p class="control-label">Browsers</p>
+      <div class="chip-row" id="browser-chips"></div>
+    </div>
+    <div class="steps-cell">
+      <p class="control-label">Initial steps <span class="hint">— optional, prepended to Steps to reproduce (Bug report / Multi bug)</span></p>
+      <textarea id="initial-steps" placeholder="Open PDP&#10;Add to cart&#10;Go to checkout"></textarea>
+    </div>
+    <div class="controls-footer">
+      <span class="autosave-note">Auto-saved in this browser</span>
+      <button class="clear-btn" id="clear-btn"><i class="ti ti-trash"></i> Clear session</button>
+    </div>
+  </div>
 
-  <main class="main" id="templates-area"></main>
+  <div class="tab-row">
+    <span class="tab-group-label">Bug</span>
+    <button class="tab active" onclick="show('bug',this)">Bug report</button>
+    <button class="tab" onclick="show('multibug',this)">Multi bug</button>
+    <button class="tab" onclick="show('bugaccept',this)">Bug acceptance</button>
+    <button class="tab" onclick="show('bugreopen',this)">Bug reopen</button>
+    <span class="tab-group-label">Story</span>
+    <button class="tab" onclick="show('story',this)">Story acceptance</button>
+    <span class="tab-group-label">QA review</span>
+    <button class="tab" onclick="show('qa1',this)">No questions</button>
+    <button class="tab" onclick="show('qa2',this)">Tests linked</button>
+    <button class="tab" onclick="show('qa5',this)">Tests linked (Asics ZA)</button>
+    <button class="tab" onclick="show('qa3',this)">QA notes</button>
+    <button class="tab" onclick="show('qa4',this)">Questions raised</button>
+  </div>
+
+  <!-- Bug report -->
+  <div id="tpl-bug" class="template-box">
+    <div class="section-header sh-purple"><i class="ti ti-layout-list"></i> Steps to reproduce</div>
+    <div class="numbered dyn-steps"><p>1.</p><p>2.</p><p>3.</p></div>
+    <div class="section-header sh-red"><i class="ti ti-circle-x"></i> Actual result:</div>
+    <div class="tpl-body"></div>
+    <div class="section-header sh-green"><i class="ti ti-circle-check"></i> Expected result:</div>
+    <div class="tpl-body"></div>
+    <div class="section-header sh-purple"><i class="ti ti-layout-list"></i> Design and Requirements:</div>
+    <div class="numbered"><p>• Design:</p><p>• Requirements:</p></div>
+    <div class="section-header sh-blue"><i class="ti ti-info-circle"></i> Additional Information</div>
+    <div class="tpl-body"></div>
+  </div>
+
+  <!-- Multi bug -->
+  <div id="tpl-multibug" class="template-box" style="display:none">
+    <div class="section-header sh-purple"><i class="ti ti-layout-list"></i> Steps to reproduce</div>
+    <div class="numbered dyn-steps"><p>1.</p><p>2.</p><p>3.</p></div>
+    <div class="tpl-section">
+      <table class="tpl-table">
+        <thead><tr>
+          <th><div class="section-header sh-red" style="margin:-8px -12px;border-radius:0"><i class="ti ti-circle-x"></i> Actual result</div></th>
+          <th><div class="section-header sh-green" style="margin:-8px -12px;border-radius:0"><i class="ti ti-circle-check"></i> Expected result</div></th>
+          <th><div class="section-header sh-blue" style="margin:-8px -12px;border-radius:0"><i class="ti ti-info-circle"></i> Test Data / Notes</div></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>
+          <tr><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bug acceptance -->
+  <div id="tpl-bugaccept" class="template-box" style="display:none">
+    <div class="tpl-section">
+      <table class="tpl-table">
+        <thead><tr><th>Verification result</th><th>Environment</th><th>Browsers</th></tr></thead>
+        <tbody><tr>
+          <td><div class="passed-cell"><i class="ti ti-circle-check"></i> Passed</div></td>
+          <td class="dyn-env"></td><td class="dyn-browsers"></td>
+        </tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bug reopen -->
+  <div id="tpl-bugreopen" class="template-box" style="display:none">
+    <div class="tpl-section">
+      <table class="tpl-table">
+        <thead><tr><th>Verification result</th><th>Environment</th><th>Browsers</th></tr></thead>
+        <tbody><tr>
+          <td><div class="reopened-cell"><i class="ti ti-circle-x"></i> Reopened</div></td>
+          <td class="dyn-env"></td><td class="dyn-browsers"></td>
+        </tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Story acceptance -->
+  <div id="tpl-story" class="template-box" style="display:none">
+    <div class="tpl-section">
+      <table class="tpl-table">
+        <thead><tr><th>Verification result</th><th>Environment</th><th>Browsers</th></tr></thead>
+        <tbody><tr>
+          <td><div class="passed-cell"><i class="ti ti-circle-check"></i> Passed</div></td>
+          <td class="dyn-env"></td><td class="dyn-browsers"></td>
+        </tr></tbody>
+      </table>
+    </div>
+    <div class="section-header sh-purple"><i class="ti ti-layout-list"></i> Images and videos</div>
+    <div class="tpl-body"></div>
+    <div class="section-header sh-blue"><i class="ti ti-info-circle"></i> Additional comments/configurations</div>
+    <div class="tpl-body"></div>
+  </div>
+
+  <!-- QA: No questions -->
+  <div id="tpl-qa1" class="template-box" style="display:none">
+    <div class="section-header sh-blue"><i class="ti ti-info-circle"></i> QA analysis completed. No further questions.</div>
+  </div>
+
+  <!-- QA: Tests linked -->
+  <div id="tpl-qa2" class="template-box" style="display:none">
+    <div class="section-header sh-blue"><i class="ti ti-info-circle"></i> QA analysis is completed. Tests are linked.</div>
+  </div>
+
+  <!-- QA: Tests linked Asics ZA -->
+  <div id="tpl-qa5" class="template-box" style="display:none">
+    <div class="section-header sh-blue"><i class="ti ti-info-circle"></i> QA analysis is completed.</div>
+    <div class="tpl-body">Tests can be found by the link:</div>
+  </div>
+
+  <!-- QA: QA notes -->
+  <div id="tpl-qa3" class="template-box" style="display:none">
+    <div class="section-header sh-purple"><i class="ti ti-layout-list"></i> QA notes</div>
+    <div class="tpl-body"></div>
+  </div>
+
+  <!-- QA: Questions raised -->
+  <div id="tpl-qa4" class="template-box" style="display:none">
+    <div class="section-header sh-purple"><i class="ti ti-layout-list"></i> QA analysis completed. Next questions raised:</div>
+    <div class="numbered"><p>1. Question 1</p><p>2. Question 2</p><p>3. Question 3</p></div>
+  </div>
+
+  <button class="copy-btn" id="copy-btn" onclick="copyTemplate()">
+    <i class="ti ti-copy"></i>
+    <span id="copy-label">Copy template</span>
+  </button>
+  <p class="note-text">Paste into the Jira description field — colored panels will appear.</p>
 </div>
 
 <script>
 const STORAGE_KEY = 'qa-jira-template-picker';
+const DEFAULT_BROWSERS = ['Chrome', 'Firefox', 'Safari', 'iOS Safari', 'Android'];
 
-// Fallback config — used when config.json can't be fetched (e.g. opened as file://)
-const DEFAULT_CONFIG = {
-  browsers: ["Chrome", "Firefox", "Safari", "iOS Safari", "Android"],
-  templates: [
-    {
-      id: "bug-desc",
-      title: "Bug description",
-      tag: "description",
-      body: "## Environment\n- Env: {{env}}\n- Browsers: {{browsers}}\n\n## Steps to reproduce\n{{steps}}\n## Expected\n\n\n## Actual\n\n\n## Screenshots / logs\n"
-    },
-    {
-      id: "verified",
-      title: "Verified",
-      tag: "comment",
-      body: "\u2705 Verified on {{env}}\nBrowsers: {{browsers}}"
-    },
-    {
-      id: "cannot-reproduce",
-      title: "Cannot reproduce",
-      tag: "comment",
-      body: "\ud83d\udd0d Cannot reproduce on {{env}}\nBrowsers: {{browsers}}\n\nSteps followed as described. Please provide additional context or a recording."
-    },
-    {
-      id: "regression-desc",
-      title: "Regression",
-      tag: "description",
-      body: "## Regression\n- Env: {{env}}\n- Browsers: {{browsers}}\n\n## Last known working build\n\n\n## Steps to reproduce\n{{steps}}\n## Expected\n\n\n## Actual\n"
-    }
-  ]
-};
-
-let config = DEFAULT_CONFIG;
+let browsersList = DEFAULT_BROWSERS;
 let state = { envName: '', envUrl: '', browsers: [], initialSteps: '' };
+let current = 'bug';
+const allIds = ['bug','multibug','bugaccept','bugreopen','story','qa1','qa2','qa3','qa4','qa5'];
 
+/* ── State persistence ── */
 function saveState() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
 }
@@ -256,49 +454,101 @@ function loadState() {
   } catch (e) {}
 }
 
-function jiraEnv() {
-  if (state.envName && state.envUrl) return `[${state.envName}|${state.envUrl}]`;
-  return state.envName || state.envUrl || '{{env}}';
+/* ── Substitution helpers ── */
+const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const escAttr = s => esc(s).replace(/"/g, '&quot;');
+
+// HTML inserted into the copied payload (real <a> link → clickable in Jira)
+function envHtml() {
+  const n = state.envName.trim(), u = state.envUrl.trim();
+  if (n && u) return `<a href="${escAttr(u)}">${esc(n)}</a>`;
+  if (u) return `<a href="${escAttr(u)}">${esc(u)}</a>`;
+  if (n) return esc(n);
+  return '{{env}}';
+}
+function browsersText() {
+  return state.browsers.length ? state.browsers.join(', ') : '{{browsers}}';
+}
+function stepsLines() {
+  return state.initialSteps
+    .split('\n')
+    .map(l => l.replace(/^\s*(?:\d+[.)]|[-•*])\s*/, '').trim())
+    .filter(Boolean);
+}
+// <ol> for the copied payload: user steps first, then 3 empty items to keep typing
+function stepsOl() {
+  const items = stepsLines().map(l => `<li><p>${esc(l)}</p></li>`).join('');
+  return `<ol>${items}<li><p></p></li><li><p></p></li><li><p></p></li></ol>`;
 }
 
-function fillTemplate(body) {
-  const browsers = state.browsers.length ? state.browsers.join(', ') : '{{browsers}}';
-  const steps = state.initialSteps.trim() ? state.initialSteps.trim() + '\n' : '';
-  return body
-    .replaceAll('{{env}}', jiraEnv())
-    .replaceAll('{{browsers}}', browsers)
-    .replaceAll('{{steps}}', steps);
+/* ── Copy payloads (Atlassian editor rich HTML) ── */
+const panel = (type, content) =>
+  `<div class="ak-editor-panel" data-panel-type="${type}"><div class="ak-editor-panel__icon" data-panel-type="${type}"></div><div class="ak-editor-panel__content">${content}</div></div>`;
+
+const tablePanel = (type, content) =>
+  `<table><tbody><tr><td style="border:none;padding:0">${panel(type, content)}</td></tr></tbody></table>`;
+
+const tablePanelWithExtra = (type, content, extra) =>
+  `<table><tbody><tr><td style="border:none;padding:0">${panel(type, content)}${extra}</td></tr></tbody></table>`;
+
+const emptyRow = `<tr><td><p></p></td><td><p></p></td><td><p></p></td></tr>`;
+
+const acceptTable = (resultPanel) =>
+  `<table><tbody><tr><th><p><strong>Verification result</strong></p></th><th><p><strong>Environment</strong></p></th><th><p><strong>Browsers</strong></p></th></tr><tr><td>${resultPanel}</td><td><p>${envHtml()}</p></td><td><p>${esc(browsersText())}</p></td></tr></tbody></table>`;
+
+const templates = {
+  bug: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${panel('note','<p><strong>Steps to reproduce</strong></p>')}${stepsOl()}${panel('error','<p><strong>Actual result:</strong></p>')}<p></p>${panel('success','<p><strong>Expected result:</strong></p>')}<p></p>${panel('note','<p><strong>Design and Requirements:</strong></p>')}<ul><li><p>Design:</p></li><li><p>Requirements:</p></li></ul>${panel('info','<p><strong>Additional Information</strong></p>')}<p></p></div>`,
+
+  multibug: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${panel('note','<p><strong>Steps to reproduce</strong></p>')}${stepsOl()}<table data-number-column="true"><tbody><tr><th>${panel('error','<p><strong>Actual result</strong></p>')}</th><th>${panel('success','<p><strong>Expected result</strong></p>')}</th><th>${panel('info','<p><strong>Test Data / Notes</strong></p>')}</th></tr>${emptyRow}${emptyRow}</tbody></table></div>`,
+
+  bugaccept: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${acceptTable(panel('success','<p><strong>Passed</strong></p>'))}</div>`,
+
+  bugreopen: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${acceptTable(panel('error','<p><strong>Reopened</strong></p>'))}</div>`,
+
+  story: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${acceptTable(panel('success','<p><strong>Passed</strong></p>'))}${panel('note','<p><strong>Images and videos</strong></p>')}<p></p>${panel('info','<p><strong>Additional comments/configurations</strong></p>')}<p></p></div>`,
+
+  qa1: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${tablePanel('info','<p>QA analysis completed. No further questions.</p>')}</div>`,
+  qa2: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${tablePanel('info','<p>QA analysis is completed. Tests are linked.</p>')}</div>`,
+  qa5: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${tablePanelWithExtra('info','<p>QA analysis is completed.</p>','<p>Tests can be found by the link:</p>')}</div>`,
+  qa3: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${tablePanel('note','<p>QA notes</p>')}<p></p></div>`,
+  qa4: () => `<meta charset="utf-8"><div data-pm-slice="1 1 []">${tablePanelWithExtra('note','<p>QA analysis completed. Next questions raised:</p>','<ol><li><p>Question 1</p></li><li><p>Question 2</p></li><li><p>Question 3</p></li></ol>')}</div>`
+};
+
+/* ── Live previews ── */
+function envPreviewHtml() {
+  const n = state.envName.trim(), u = state.envUrl.trim();
+  if (n && u) return `<a href="${escAttr(u)}" target="_blank" rel="noopener">${esc(n)}</a>`;
+  if (u) return `<a href="${escAttr(u)}" target="_blank" rel="noopener">${esc(u)}</a>`;
+  if (n) return esc(n);
+  return '<span class="ph">{{env}}</span>';
+}
+function browsersPreviewHtml() {
+  return state.browsers.length ? esc(state.browsers.join(', ')) : '<span class="ph">{{browsers}}</span>';
+}
+function stepsPreviewHtml() {
+  const lines = stepsLines();
+  let html = lines.map((l, i) => `<p>${i + 1}. ${esc(l)}</p>`).join('');
+  for (let i = 1; i <= 3; i++) html += `<p>${lines.length + i}.</p>`;
+  return html;
+}
+function updatePreviews() {
+  document.querySelectorAll('.dyn-env').forEach(el => { el.innerHTML = envPreviewHtml(); });
+  document.querySelectorAll('.dyn-browsers').forEach(el => { el.innerHTML = browsersPreviewHtml(); });
+  document.querySelectorAll('.dyn-steps').forEach(el => { el.innerHTML = stepsPreviewHtml(); });
+
+  const p = document.getElementById('env-preview');
+  const n = state.envName.trim(), u = state.envUrl.trim();
+  if (n && u) p.innerHTML = `&rarr; <a href="${escAttr(u)}" target="_blank" rel="noopener">${esc(n)}</a> (clickable link)`;
+  else if (n || u) p.innerHTML = `&rarr; ${esc(n || u)} (plain text — fill both for a link)`;
+  else p.innerHTML = 'Name + URL &rarr; clickable link in Jira';
 }
 
-function escapeHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function highlight(text) {
-  return escapeHtml(text)
-    .replace(/\[([^\]|]+)\|([^\]]+)\]/g, '<span class="jira-link">[$1|$2]</span>')
-    .replace(/\{\{[^}]+\}\}/g, m => `<span class="placeholder">${m}</span>`);
-}
-
-function updateEnvPreview() {
-  const el = document.getElementById('env-preview');
-  if (state.envName && state.envUrl) {
-    el.textContent = `\u2192 [${state.envName}|${state.envUrl}]`;
-    el.classList.add('ready');
-  } else if (state.envName || state.envUrl) {
-    el.textContent = `\u2192 ${state.envName || state.envUrl}`;
-    el.classList.remove('ready');
-  } else {
-    el.textContent = 'Jira: [name|url]';
-    el.classList.remove('ready');
-  }
-}
-
-function renderBrowsers() {
-  const grid = document.getElementById('browsers');
-  grid.innerHTML = '';
-  config.browsers.forEach(b => {
-    const chip = document.createElement('div');
+function renderBrowserChips() {
+  const row = document.getElementById('browser-chips');
+  row.innerHTML = '';
+  browsersList.forEach(b => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
     chip.className = 'chip' + (state.browsers.includes(b) ? ' active' : '');
     chip.textContent = b;
     chip.addEventListener('click', () => {
@@ -307,38 +557,11 @@ function renderBrowsers() {
       chip.classList.toggle('active', state.browsers.includes(b));
       update();
     });
-    grid.appendChild(chip);
+    row.appendChild(chip);
   });
 }
 
-function renderTemplates() {
-  const area = document.getElementById('templates-area');
-  area.innerHTML = '';
-  config.templates.forEach(t => {
-    const content = fillTemplate(t.body);
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="card-header">
-        <span class="card-title">${escapeHtml(t.title)}</span>
-        <span class="tag tag-${t.tag === 'description' ? 'description' : 'comment'}">${escapeHtml(t.tag)}</span>
-      </div>
-      <div class="card-body">${highlight(content)}</div>
-      <button class="copy-btn" data-id="${t.id}">\u29c9 Copy</button>
-    `;
-    card.querySelector('.copy-btn').addEventListener('click', (e) => {
-      const btn = e.currentTarget;
-      navigator.clipboard.writeText(fillTemplate(t.body)).then(() => {
-        btn.textContent = '\u2713 Copied';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = '\u29c9 Copy'; btn.classList.remove('copied'); }, 1500);
-      });
-    });
-    area.appendChild(card);
-  });
-}
-
-function update() { saveState(); updateEnvPreview(); renderTemplates(); }
+function update() { saveState(); updatePreviews(); }
 
 function syncInputs() {
   document.getElementById('env-name').value = state.envName;
@@ -346,6 +569,37 @@ function syncInputs() {
   document.getElementById('initial-steps').value = state.initialSteps;
 }
 
+/* ── Tabs & copy (original behavior) ── */
+function show(id, btn) {
+  current = id;
+  allIds.forEach(t => {
+    document.getElementById('tpl-' + t).style.display = t === id ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('copy-label').textContent = 'Copy template';
+  document.getElementById('copy-btn').classList.remove('copied');
+}
+
+function copyTemplate() {
+  const html = templates[current]();
+  const blob = new Blob([html], { type: 'text/html' });
+  const plain = new Blob([''], { type: 'text/plain' });
+  const item = new ClipboardItem({ 'text/html': blob, 'text/plain': plain });
+  navigator.clipboard.write([item]).then(() => {
+    const btn = document.getElementById('copy-btn');
+    document.getElementById('copy-label').textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      document.getElementById('copy-label').textContent = 'Copy template';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    document.getElementById('copy-label').textContent = 'Copy failed — try again';
+  });
+}
+
+/* ── Events ── */
 document.getElementById('env-name').addEventListener('input', e => { state.envName = e.target.value; update(); });
 document.getElementById('env-url').addEventListener('input', e => { state.envUrl = e.target.value; update(); });
 document.getElementById('initial-steps').addEventListener('input', e => { state.initialSteps = e.target.value; update(); });
@@ -354,33 +608,29 @@ document.getElementById('clear-btn').addEventListener('click', () => {
   state = { envName: '', envUrl: '', browsers: [], initialSteps: '' };
   try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
   syncInputs();
-  renderBrowsers();
-  updateEnvPreview();
-  renderTemplates();
+  renderBrowserChips();
+  updatePreviews();
 });
 
+/* ── Init ── */
 async function init() {
   loadState();
   try {
     const res = await fetch('./config.json', { cache: 'no-store' });
     if (res.ok) {
       const json = await res.json();
-      if (json && Array.isArray(json.templates) && json.templates.length) {
-        config = {
-          browsers: Array.isArray(json.browsers) && json.browsers.length ? json.browsers : DEFAULT_CONFIG.browsers,
-          templates: json.templates
-        };
+      if (json && Array.isArray(json.browsers) && json.browsers.length) {
+        browsersList = json.browsers;
       }
     }
   } catch (e) { /* file:// or offline — use defaults */ }
 
   // drop saved browsers that no longer exist in config
-  state.browsers = state.browsers.filter(b => config.browsers.includes(b));
+  state.browsers = state.browsers.filter(b => browsersList.includes(b));
 
   syncInputs();
-  renderBrowsers();
-  updateEnvPreview();
-  renderTemplates();
+  renderBrowserChips();
+  updatePreviews();
 }
 
 init();

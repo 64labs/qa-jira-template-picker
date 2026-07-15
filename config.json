@@ -1,29 +1,3 @@
 {
-  "browsers": ["Chrome", "Firefox", "Safari", "iOS Safari", "Android"],
-  "templates": [
-    {
-      "id": "bug-desc",
-      "title": "Bug description",
-      "tag": "description",
-      "body": "## Environment\n- Env: {{env}}\n- Browsers: {{browsers}}\n\n## Steps to reproduce\n{{steps}}\n## Expected\n\n\n## Actual\n\n\n## Screenshots / logs\n"
-    },
-    {
-      "id": "verified",
-      "title": "Verified",
-      "tag": "comment",
-      "body": "✅ Verified on {{env}}\nBrowsers: {{browsers}}"
-    },
-    {
-      "id": "cannot-reproduce",
-      "title": "Cannot reproduce",
-      "tag": "comment",
-      "body": "🔍 Cannot reproduce on {{env}}\nBrowsers: {{browsers}}\n\nSteps followed as described. Please provide additional context or a recording."
-    },
-    {
-      "id": "regression-desc",
-      "title": "Regression",
-      "tag": "description",
-      "body": "## Regression\n- Env: {{env}}\n- Browsers: {{browsers}}\n\n## Last known working build\n\n\n## Steps to reproduce\n{{steps}}\n## Expected\n\n\n## Actual\n"
-    }
-  ]
+  "browsers": ["Chrome", "Firefox", "Safari", "iOS Safari", "Android"]
 }
